@@ -2,6 +2,11 @@
 
 a plugin for inter-compatibility with [rust][rust] inside [gradle][gradle] projects.
 
+# notice
+
+> [!WARNING]
+> this project is being rewritten. you can follow the progress on [the v4 branch](https://github.com/stardust-enterprises/gradle-rust/tree/v4)
+
 # importing
 
 you can import [gradle-rust][project-url] from [gradle's plugin portal][gpp] just by adding it to your `plugins` block:
