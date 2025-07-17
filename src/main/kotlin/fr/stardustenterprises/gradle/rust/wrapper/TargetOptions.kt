@@ -52,9 +52,7 @@ data class TargetOptions(
             cmd += "--release"
         }
 
-        if (!this.args.contains("_DEFAULT")) {
-            cmd.addAll(this.args)
-        }
+        cmd.addAll(this.args)
 
         return cmd
     }
