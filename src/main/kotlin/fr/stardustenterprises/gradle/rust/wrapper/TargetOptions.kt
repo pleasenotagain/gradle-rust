@@ -83,21 +83,10 @@ data class TargetOptions(
         if (this.args.isEmpty()) {
             this.args = configuration.args
         } else {
-            if (this.args.contains("_DEFAULT")) {
-                val argsList = this.args.toList()
-                val finalList = mutableListOf<String>()
-                val index = argsList.indexOfFirst { it == "_DEFAULT" }
-                val before = argsList.subList(0, index)
-                val after = if (argsList.size == index)
-                    emptyList()
-                else
-                    argsList.subList(index + 1, argsList.size)
-
-                finalList.addAll(before)
-                finalList.addAll(configuration.args.toList())
-                finalList.addAll(after)
-
-                this.args = finalList
+            val defaultsIndex = this.args.indexOf("_DEFAULT")
+            if (defaultsIndex != -1) {
+                this.args.removeAt(defaultsIndex)
+                this.args.addAll(defaultsIndex, configuration.args)
             }
         }
 
