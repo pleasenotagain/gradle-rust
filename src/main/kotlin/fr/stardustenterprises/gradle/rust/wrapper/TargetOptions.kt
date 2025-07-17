@@ -52,6 +52,10 @@ data class TargetOptions(
             cmd += "--release"
         }
 
+        if (!this.args.contains("_DEFAULT")) {
+            cmd.addAll(this.args)
+        }
+
         return cmd
     }
 
@@ -79,7 +83,7 @@ data class TargetOptions(
         if (this.args.isEmpty()) {
             this.args = configuration.args
         } else {
-            if (this.args.any { it == "_DEFAULT" }) {
+            if (this.args.contains("_DEFAULT")) {
                 val argsList = this.args.toList()
                 val finalList = mutableListOf<String>()
                 val index = argsList.indexOfFirst { it == "_DEFAULT" }
@@ -100,22 +104,22 @@ data class TargetOptions(
         if (this.env.isEmpty()) {
             this.env = configuration.env
         } else {
-            if (this.env.any { it.key == "_DEFAULT" }) {
-                val argsList = this.env.toList()
+            if (this.env.containsKey("_DEFAULT")) {
+                val envVarList = this.env.toList()
                 val finalList = mutableListOf<Pair<String, String>>()
-                val index = argsList.indexOfFirst { it.first == "_DEFAULT" }
-                val before = argsList.subList(0, index)
-                val after = if (argsList.size == index)
+                val index = envVarList.indexOfFirst { it.first == "_DEFAULT" }
+                val before = envVarList.subList(0, index)
+                val after = if (envVarList.size == index)
                     emptyList()
                 else
-                    argsList.subList(index + 1, argsList.size)
+                    envVarList.subList(index + 1, envVarList.size)
 
                 finalList.addAll(before)
                 finalList.addAll(configuration.env.toList())
                 finalList.addAll(after)
 
                 this.env = mutableMapOf()
-                finalList.forEach(this.env::plus)
+                finalList.toMap(this.env)
             }
         }
     }
