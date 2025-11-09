@@ -2,10 +2,10 @@
 
 a plugin for inter-compatibility with [rust][rust] inside [gradle][gradle] projects.
 
-# notice
+# archival notice
 
 > [!WARNING]
-> this project is being rewritten. you can follow the progress on [the v4 branch](https://github.com/stardust-enterprises/gradle-rust/tree/v4)
+> this project has been archived, as I do not have the time nor the usecase for it anymore. there was a work-in-progress [rewrite branch](https://github.com/stardust-enterprises/gradle-rust/tree/v4), but it never went anywhere.
 
 # importing
 
