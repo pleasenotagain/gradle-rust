@@ -1,4 +1,4 @@
-import java.net.URL
+import java.net.URI
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
@@ -29,9 +29,9 @@ group = Coordinates.GROUP
 version = Coordinates.VERSION
 
 // What JVM version should this project compile to
-val targetVersion = "1.8"
+val targetVersion = "21"
 // What JVM version this project is written in
-val sourceVersion = "1.8"
+val sourceVersion = "21"
 
 // Maven Repositories
 repositories {
@@ -76,10 +76,6 @@ configurations {
 // The latest commit ID
 val buildRevision: String = grgit.log()[0].id ?: "dev"
 
-// Disable unneeded rules
-ktlint {
-    this.disabledRules.add("no-wildcard-imports")
-}
 
 tasks {
     test {
@@ -88,7 +84,9 @@ tasks {
 
     // Configure JVM versions
     compileKotlin {
-        kotlinOptions.jvmTarget = targetVersion
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+        }
     }
     compileJava {
         targetCompatibility = targetVersion
@@ -127,7 +125,7 @@ tasks {
             // Link the source to the documentation
             sourceLink {
                 localDirectory.set(file("src"))
-                remoteUrl.set(URL("https://${Coordinates.GIT_HOST}/${Coordinates.REPO_ID}/tree/trunk/src"))
+                remoteUrl.set(URI("https://${Coordinates.GIT_HOST}/${Coordinates.REPO_ID}/tree/trunk/src").toURL())
             }
 
             // External documentation link template
@@ -216,26 +214,24 @@ artifacts {
 }
 
 gradlePlugin {
+    website.set("https://github.com/${Coordinates.REPO_ID}")
+    vcsUrl.set("https://github.com/${Coordinates.REPO_ID}")
     plugins {
         create("wrapperPlugin") {
             displayName = "Rust Wrapper"
             description = "A plugin that wraps Rust's build systems, for embedding Rust libraries in Java projects."
             id = "fr.stardustenterprises.rust.wrapper"
             implementationClass = "fr.stardustenterprises.gradle.rust.wrapper.WrapperPlugin"
+            tags.set(listOf("rust", "rustlang", "cargo", "native", "wrapper"))
         }
         create("importerPlugin") {
             displayName = "Rust Importer"
             description = "A plugin that makes it possible to import outputs from Rust from another Gradle project."
             id = "fr.stardustenterprises.rust.importer"
             implementationClass = "fr.stardustenterprises.gradle.rust.importer.ImporterPlugin"
+            tags.set(listOf("rust", "rustlang", "cargo", "native", "importer"))
         }
     }
-}
-
-pluginBundle {
-    vcsUrl = "https://github.com/${Coordinates.REPO_ID}"
-    website = "https://github.com/${Coordinates.REPO_ID}"
-    tags = listOf("rust", "rustlang", "cargo", "native", "wrapper")
 }
 
 publishing.publications {

@@ -1,11 +1,11 @@
-private const val kotlinVersion = "1.7.10"
+private const val kotlinVersion = "2.0.21"
 
 object Plugins {
     const val KOTLIN = kotlinVersion
-    const val GRGIT = "4.1.1" // old version for jgit to work on Java 8
-    const val KTLINT = "10.3.0"
-    const val DOKKA = kotlinVersion
-    const val GRADLE_PLUGIN_PUBLISH = "0.21.0"
+    const val GRGIT = "5.2.2"
+    const val KTLINT = "12.1.2"
+    const val DOKKA = "1.9.20"
+    const val GRADLE_PLUGIN_PUBLISH = "1.3.0"
 }
 
 object Dependencies {

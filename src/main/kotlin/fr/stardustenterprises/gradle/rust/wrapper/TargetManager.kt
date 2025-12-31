@@ -1,27 +1,27 @@
 package fr.stardustenterprises.gradle.rust.wrapper
 
 import fr.stardustenterprises.gradle.rust.wrapper.ext.WrapperExtension
-import org.gradle.api.Project
+import org.gradle.process.ExecOperations
 import java.io.ByteArrayOutputStream
 
 object TargetManager {
     fun ensureTargetsInstalled(
-        project: Project,
+        execOperations: ExecOperations,
         wrapperExtension: WrapperExtension,
     ) {
         if (wrapperExtension.cargoInstallTargets.getOrElse(false)) {
-            installTargets(project, wrapperExtension)
+            installTargets(execOperations, wrapperExtension)
         }
     }
 
     private fun installTargets(
-        project: Project,
+        execOperations: ExecOperations,
         wrapperExtension: WrapperExtension,
     ) {
         val rustupCommand = wrapperExtension.rustupCommand.get()
 
         val stdout = ByteArrayOutputStream()
-        project.exec { exec ->
+        execOperations.exec { exec ->
             exec.commandLine(rustupCommand)
             exec.args("target", "list", "--installed")
             exec.workingDir(wrapperExtension.crate.get().asFile)
@@ -43,7 +43,7 @@ object TargetManager {
             if (command.contains("cargo") &&
                 !command.contains("cross")
             ) {
-                project.exec { exec ->
+                execOperations.exec { exec ->
                     exec.commandLine(rustupCommand)
                     exec.args("target", "add", targetOptions.target)
                     exec.workingDir(wrapperExtension.crate.get().asFile)

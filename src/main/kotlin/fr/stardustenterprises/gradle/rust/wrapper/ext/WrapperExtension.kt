@@ -10,6 +10,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.process.ExecOperations
 import org.tomlj.Toml
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
@@ -18,6 +19,7 @@ import javax.inject.Inject
 abstract class WrapperExtension
 @Inject constructor(
     _project: Project,
+    private val execOperations: ExecOperations,
 ) : StargradExtension(_project) {
 
     @InputDirectory
@@ -76,7 +78,7 @@ abstract class WrapperExtension
 
     private val _defaultTarget: TargetOptions by lazy {
         val stdout = ByteArrayOutputStream()
-        project.exec {
+        execOperations.exec {
             it.commandLine("rustup")
             it.args("default")
             it.workingDir(crate.asFile.getOrElse(project.projectDir))

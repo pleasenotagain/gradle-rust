@@ -6,10 +6,10 @@ import fr.stardustenterprises.stargrad.task.Task
 import org.apache.commons.io.FileUtils.deleteDirectory
 
 @Task(group = "rust", name = "test")
-open class TestTask : WrappedTask("test")
+abstract class TestTask : WrappedTask("test")
 
 @Task(group = "rust", name = "run")
-open class RunTask : WrappedTask("run")
+abstract class RunTask : WrappedTask("run")
 
 @Task(group = "rust", name = "clean")
 open class CleanTask : ConfigurableTask<WrapperExtension>() {
