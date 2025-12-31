@@ -9,9 +9,9 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.language.jvm.tasks.ProcessResources
 
 class ImporterPlugin : StargradPlugin() {
-    override val id = "fr.stardustenterprises.rust.importer"
+    override val id = "io.github.pleasenotagain.rust.importer"
     override val conflictsWith: Set<String> =
-        setOf("fr.stardustenterprises.rust.wrapper")
+        setOf("io.github.pleasenotagain.rust.wrapper")
 
     private lateinit var configuration: Configuration
     private lateinit var importerExtension: ImporterExtension

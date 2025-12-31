@@ -1,12 +1,12 @@
 object Coordinates {
     const val NAME = "Gradle Rust"
     const val DESC = "Compile and use Rust projects within a Gradle project."
-    const val VENDOR = "Stardust Enterprises"
+    const val VENDOR = "pleasenotagain"
 
     const val GIT_HOST = "github.com"
-    const val REPO_ID = "stardust-enterprises/gradle-rust"
+    const val REPO_ID = "pleasenotagain/gradle-rust"
 
-    const val GROUP = "fr.stardustenterprises.rust"
+    const val GROUP = "io.github.pleasenotagain.rust"
     const val VERSION = "3.2.6"
 }
 

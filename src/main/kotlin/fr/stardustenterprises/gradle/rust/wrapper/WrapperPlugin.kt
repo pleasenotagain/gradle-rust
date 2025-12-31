@@ -14,9 +14,9 @@ class WrapperPlugin : StargradPlugin() {
         lateinit var targetContainer: NamedDomainObjectContainer<TargetOptions>
     }
 
-    override val id = "fr.stardustenterprises.rust.wrapper"
+    override val id = "io.github.pleasenotagain.rust.wrapper"
     override val conflictsWith: Set<String> =
-        setOf("fr.stardustenterprises.rust.importer", "java")
+        setOf("io.github.pleasenotagain.rust.importer", "java")
 
     private lateinit var wrapperExtension: WrapperExtension
     private lateinit var buildTaskProvider: TaskProvider<out BuildTask>
