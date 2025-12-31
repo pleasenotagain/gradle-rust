@@ -21,7 +21,7 @@ import org.gradle.process.ExecOperations
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Files
-import java.util.*
+import java.util.Objects
 import java.util.stream.Collectors
 import java.util.zip.ZipException
 import javax.inject.Inject
@@ -29,18 +29,18 @@ import kotlin.io.path.Path
 import kotlin.io.path.absolute
 
 @Task(
-    group = "rust", name = "build"
+    group = "rust",
+    name = "build",
 )
 abstract class BuildTask : ConfigurableTask<WrapperExtension>() {
-
     @get:Inject
     abstract val execOperations: ExecOperations
+
     companion object {
         private val FORBIDDEN_SUFFIXES =
             arrayOf(
                 ".o",
                 ".rlib",
-
                 // MSVC
                 ".lib",
                 ".pdb",
@@ -50,10 +50,11 @@ abstract class BuildTask : ConfigurableTask<WrapperExtension>() {
         private const val EXPORTS_FILE_NAME =
             "_fr_stardustenterprises_gradle_rust_exports.zip"
 
-        private val json = GsonBuilder()
-            .setPrettyPrinting()
-            .serializeNulls()
-            .create()
+        private val json =
+            GsonBuilder()
+                .setPrettyPrinting()
+                .serializeNulls()
+                .create()
     }
 
     private lateinit var workingDir: File
@@ -71,21 +72,24 @@ abstract class BuildTask : ConfigurableTask<WrapperExtension>() {
         private set
 
     override fun applyConfiguration() {
-        this.workingDir = this.configuration.crate.asFile.getOrElse(
-            this.project.projectDir
-        )
+        this.workingDir =
+            this.configuration.crate.asFile.getOrElse(
+                this.project.projectDir,
+            )
 
         this.inputFiles = project.files()
 
         this.workingDir.listFiles { f -> f.name.endsWith(".toml") }
             ?.forEach { this.inputFiles += this.project.fileTree(it) }
-        this.inputFiles += this.project.fileTree(
-            this.workingDir.resolve("src")
-        )
+        this.inputFiles +=
+            this.project.fileTree(
+                this.workingDir.resolve("src"),
+            )
 
-        this.targetsHash = Objects.hash(
-            *this.configuration.targets.toList().toTypedArray()
-        )
+        this.targetsHash =
+            Objects.hash(
+                *this.configuration.targets.toList().toTypedArray(),
+            )
 
         val rustDir = this.project.buildDir.resolve("rust")
         this.exportsZip = rustDir.resolve(EXPORTS_FILE_NAME)
@@ -115,8 +119,8 @@ abstract class BuildTask : ConfigurableTask<WrapperExtension>() {
                     .format(
                         targetOptions.name,
                         targetOptions.command,
-                        targetOptions.target
-                    )
+                        targetOptions.target,
+                    ),
             )
 
             build(targetOptions, tmpDir, cargoTomlFile)?.let {
@@ -133,18 +137,21 @@ abstract class BuildTask : ConfigurableTask<WrapperExtension>() {
         tmpDir: File,
         cargoToml: File,
     ): File? {
-        val args = targetOpt.subcommand(
-            "build", "--message-format=json"
-        )
+        val args =
+            targetOpt.subcommand(
+                "build",
+                "--message-format=json",
+            )
 
         val stdout = ByteArrayOutputStream()
         val target = targetOpt.target!!.lowercase()
         val command = targetOpt.command!!.lowercase()
         val currentOS = EnumOperatingSystem.currentOS
 
-        val isOsxCross = target.contains("darwin") &&
-            command.contains("cargo") &&
-            currentOS != EnumOperatingSystem.MACOS
+        val isOsxCross =
+            target.contains("darwin") &&
+                command.contains("cargo") &&
+                currentOS != EnumOperatingSystem.MACOS
 
         try {
             this.execOperations.exec {
@@ -159,11 +166,11 @@ abstract class BuildTask : ConfigurableTask<WrapperExtension>() {
             if (isOsxCross) {
                 println(
                     "[gradle-rust] Error cross-compiling to a darwin target (" +
-                        targetOpt.target + ")."
+                        targetOpt.target + ").",
                 )
                 println(
                     "[gradle-rust] Ensure your .cargo/config.toml file is " +
-                        "configured properly with the osxcross toolchains."
+                        "configured properly with the osxcross toolchains.",
                 )
             }
         }
@@ -199,14 +206,17 @@ abstract class BuildTask : ConfigurableTask<WrapperExtension>() {
 
                     val targetObj = jsonObject.get("target")?.asJsonObject
                     val kind = targetObj?.get("kind")?.asJsonArray
-                    if (kind?.none { it.asString.lowercase().endsWith("dylib") } == true)
+                    if (kind?.none { it.asString.lowercase().endsWith("dylib") } == true) {
                         continue
-                    if (kind?.any { it.asString.lowercase() == "custom-build" } == true)
+                    }
+                    if (kind?.any { it.asString.lowercase() == "custom-build" } == true) {
                         continue
+                    }
                     if (manifestPath == Path(cargoToml.absolutePath)) {
-                        val array = jsonObject.getAsJsonArray(
-                            "filenames"
-                        )
+                        val array =
+                            jsonObject.getAsJsonArray(
+                                "filenames",
+                            )
                         dylib = true
 
                         for (elem in array) {
@@ -222,7 +232,7 @@ abstract class BuildTask : ConfigurableTask<WrapperExtension>() {
                                 file = File(project.projectDir, binPath.toString())
                                 if (!file.exists()) {
                                     throw RuntimeException(
-                                        "Cannot find output file!"
+                                        "Cannot find output file!",
                                     )
                                 }
                             }
@@ -240,7 +250,7 @@ abstract class BuildTask : ConfigurableTask<WrapperExtension>() {
         if (error) {
             throw RuntimeException(
                 "An error occured during the compilation process, see logs above. \nCommand: " +
-                    targetOpt.command + " " + args.joinToString(" ")
+                    targetOpt.command + " " + args.joinToString(" "),
             )
         }
 
@@ -252,13 +262,14 @@ abstract class BuildTask : ConfigurableTask<WrapperExtension>() {
         if (output == null) {
             throw RuntimeException(
                 "Didn't find the output file... report this.\nCommand: " +
-                    targetOpt.command + " " + args.joinToString(" ")
+                    targetOpt.command + " " + args.joinToString(" "),
             )
         }
 
-        val newOut = tmpDir.resolve(targetOpt.target!!)
-            .also(File::mkdirs)
-            .resolve(targetOpt.outputName!!)
+        val newOut =
+            tmpDir.resolve(targetOpt.target!!)
+                .also(File::mkdirs)
+                .resolve(targetOpt.outputName!!)
 
         if (!newOut.exists()) {
             newOut.createNewFile()
@@ -281,10 +292,11 @@ abstract class BuildTask : ConfigurableTask<WrapperExtension>() {
 
         val exportsList = mutableListOf<TargetExport>()
 
-        val skipTags = arrayOf(
-            "unknown", "pc", "sun", "nvidia", "gnu",
-            "msvc", "none", "elf", "wasi", "uwp",
-        ) // does eabi/abi(64) belong in there?
+        val skipTags =
+            arrayOf(
+                "unknown", "pc", "sun", "nvidia", "gnu",
+                "msvc", "none", "elf", "wasi", "uwp",
+            ) // does eabi/abi(64) belong in there?
 
         val skipSecondTags = arrayOf("apple", "linux")
 
@@ -298,33 +310,37 @@ abstract class BuildTask : ConfigurableTask<WrapperExtension>() {
             var arch = parsed[0]
             parsed.removeAt(0)
 
-            parsed = parsed.map { data ->
-                var newData = data
-                skipTags.forEach { skip ->
-                    newData = newData.replace(skip, "")
-                }
-                newData
-            }.toMutableList()
+            parsed =
+                parsed.map { data ->
+                    var newData = data
+                    skipTags.forEach { skip ->
+                        newData = newData.replace(skip, "")
+                    }
+                    newData
+                }.toMutableList()
             parsed.filter(String::isEmpty).forEach(parsed::remove)
 
-            parsed = parsed.map { data ->
-                var newData = data
-                if (newData.endsWith("hf") ||
-                    newData.contains("hardfloat")
-                ) {
-                    newData = newData.replace("hf", "")
-                        .replace("hardfloat", "")
-                    arch += "hf"
-                }
-                if (newData.endsWith("sf") ||
-                    newData.contains("softfloat")
-                ) {
-                    newData = newData.replace("sf", "")
-                        .replace("softfloat", "")
-                    arch += "sf"
-                }
-                newData
-            }.toMutableList()
+            parsed =
+                parsed.map { data ->
+                    var newData = data
+                    if (newData.endsWith("hf") ||
+                        newData.contains("hardfloat")
+                    ) {
+                        newData =
+                            newData.replace("hf", "")
+                                .replace("hardfloat", "")
+                        arch += "hf"
+                    }
+                    if (newData.endsWith("sf") ||
+                        newData.contains("softfloat")
+                    ) {
+                        newData =
+                            newData.replace("sf", "")
+                                .replace("softfloat", "")
+                        arch += "sf"
+                    }
+                    newData
+                }.toMutableList()
             parsed.filter(String::isEmpty).forEach(parsed::remove)
 
             var os = parsed.stream().collect(Collectors.joining("-"))
@@ -343,8 +359,9 @@ abstract class BuildTask : ConfigurableTask<WrapperExtension>() {
         val exports = Exports(1, exportsList)
         exportsFile.writeText(json.toJson(exports))
 
-        val files: Array<File> = outputDir.listFiles()
-            ?: throw RuntimeException("No outputs >.>")
+        val files: Array<File> =
+            outputDir.listFiles()
+                ?: throw RuntimeException("No outputs >.>")
 
         if (this.exportsZip.exists()) {
             this.exportsZip.delete()

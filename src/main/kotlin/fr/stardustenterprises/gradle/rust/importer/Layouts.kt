@@ -2,10 +2,11 @@ package fr.stardustenterprises.gradle.rust.importer
 
 import java.io.File
 
-val LAYOUT_REGISTRY = mutableMapOf(
-    "hierarchical" to HierarchicalLayout(),
-    "flat" to FlatLayout()
-)
+val LAYOUT_REGISTRY =
+    mutableMapOf(
+        "hierarchical" to HierarchicalLayout(),
+        "flat" to FlatLayout(),
+    )
 
 @FunctionalInterface
 interface ILayout {
@@ -28,10 +29,11 @@ class HierarchicalLayout : ILayout {
             (if (root.endsWith(File.separator)) "" else File.separator) +
             osName +
             File.separator + (
-            if (archName.isNotEmpty())
-                archName + File.separator
-            else
-                ""
+                if (archName.isNotEmpty()) {
+                    archName + File.separator
+                } else {
+                    ""
+                }
             ) +
             targetName
 }

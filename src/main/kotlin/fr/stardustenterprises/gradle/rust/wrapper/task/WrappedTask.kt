@@ -10,9 +10,8 @@ import javax.inject.Inject
 
 abstract class WrappedTask(
     @Internal
-    protected val command: String
+    protected val command: String,
 ) : ConfigurableTask<WrapperExtension>() {
-
     @get:Inject
     abstract val execOperations: ExecOperations
 
@@ -26,7 +25,7 @@ abstract class WrappedTask(
                 it.args(target.subcommand(command))
                 it.workingDir(
                     configuration.crate.asFile.orNull
-                        ?: throw RuntimeException("Invalid working dir.")
+                        ?: throw RuntimeException("Invalid working dir."),
                 )
                 it.environment(target.env)
             }.assertNormalExitValue()

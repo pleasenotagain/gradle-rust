@@ -20,7 +20,7 @@ data class TargetOptions(
             null,
             null,
             null,
-            null
+            null,
         )
 
     /**
@@ -30,8 +30,7 @@ data class TargetOptions(
      *
      * @return The name. Never null.
      */
-    override fun getName(): String =
-        name
+    override fun getName(): String = name
 
     fun subcommand(vararg sub: String): List<String> {
         // cargo [+toolchain] [OPTIONS] [SUBCOMMAND]
@@ -96,10 +95,12 @@ data class TargetOptions(
                 val finalList = mutableListOf<Pair<String, String>>()
                 val index = envVarList.indexOfFirst { it.first == "_DEFAULT" }
                 val before = envVarList.subList(0, index)
-                val after = if (envVarList.size == index)
-                    emptyList()
-                else
-                    envVarList.subList(index + 1, envVarList.size)
+                val after =
+                    if (envVarList.size == index) {
+                        emptyList()
+                    } else {
+                        envVarList.subList(index + 1, envVarList.size)
+                    }
 
                 finalList.addAll(before)
                 finalList.addAll(configuration.env.toList())

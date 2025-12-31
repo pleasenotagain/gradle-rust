@@ -35,11 +35,13 @@ class ImporterPlugin : StargradPlugin() {
             }
             .get()
             // Use anonymous object instead of lambda to avoid message disabling execution optimizations
-            .doLast(object : Action<Task> {
-                override fun execute(t: Task) {
-                    val baseDir = (t as ProcessResources).destinationDir
-                    process(project, importerExtension, baseDir)
-                }
-            })
+            .doLast(
+                object : Action<Task> {
+                    override fun execute(t: Task) {
+                        val baseDir = (t as ProcessResources).destinationDir
+                        process(project, importerExtension, baseDir)
+                    }
+                },
+            )
     }
 }

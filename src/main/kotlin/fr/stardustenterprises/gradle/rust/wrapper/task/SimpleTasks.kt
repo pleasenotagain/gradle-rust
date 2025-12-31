@@ -14,9 +14,10 @@ abstract class RunTask : WrappedTask("run")
 @Task(group = "rust", name = "clean")
 open class CleanTask : ConfigurableTask<WrapperExtension>() {
     override fun run() {
-        val workingDir = this.configuration.crate.asFile.getOrElse(
-            this.project.projectDir
-        )
+        val workingDir =
+            this.configuration.crate.asFile.getOrElse(
+                this.project.projectDir,
+            )
 
         deleteDirectory(workingDir.resolve("target"))
         deleteDirectory(this.project.projectDir.resolve("build"))

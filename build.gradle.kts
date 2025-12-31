@@ -76,7 +76,6 @@ configurations {
 // The latest commit ID
 val buildRevision: String = grgit.log()[0].id ?: "dev"
 
-
 tasks {
     test {
         useJUnitPlatform()
@@ -170,7 +169,7 @@ tasks {
             "Bundle-Description" to Coordinates.DESC,
             "Bundle-DocURL" to "https://${Coordinates.GIT_HOST}/${Coordinates.REPO_ID}",
             "Bundle-Vendor" to Coordinates.VENDOR,
-            "Bundle-SymbolicName" to Coordinates.GROUP + '.' + Coordinates.NAME
+            "Bundle-SymbolicName" to Coordinates.GROUP + '.' + Coordinates.NAME,
         ).forEach { (k, v) ->
             manifest.attributes[k] = v
         }
@@ -203,10 +202,11 @@ tasks {
 }
 
 // Define the default artifacts' tasks
-val defaultArtifactTasks = arrayOf(
-    tasks["sourcesJar"],
-    tasks["javadocJar"]
-)
+val defaultArtifactTasks =
+    arrayOf(
+        tasks["sourcesJar"],
+        tasks["javadocJar"],
+    )
 
 // Declare the artifacts
 artifacts {

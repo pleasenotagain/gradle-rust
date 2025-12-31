@@ -11,14 +11,17 @@ import javax.inject.Inject
 
 @Extension("rustImport")
 abstract class ImporterExtension
-@Inject constructor(
-    _project: Project
-) : StargradExtension(_project) {
-    @Input
-    val baseDir: Property<String> = objects.property(String::class.java)
-        .convention("/META-INF/natives/")
+    @Inject
+    constructor(
+        _project: Project,
+    ) : StargradExtension(_project) {
+        @Input
+        val baseDir: Property<String> =
+            objects.property(String::class.java)
+                .convention("/META-INF/natives/")
 
-    @Input
-    val layout: Property<String> = objects.property(String::class.java)
-        .convention("hierarchical")
-}
+        @Input
+        val layout: Property<String> =
+            objects.property(String::class.java)
+                .convention("hierarchical")
+    }

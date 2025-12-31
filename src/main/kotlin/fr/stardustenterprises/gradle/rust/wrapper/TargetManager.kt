@@ -29,9 +29,10 @@ object TargetManager {
             exec.standardOutput = stdout
         }.assertNormalExitValue()
 
-        val installed = stdout.toString().split("\n")
-            .toMutableList()
-            .also { it.removeIf(String::isNullOrBlank) }
+        val installed =
+            stdout.toString().split("\n")
+                .toMutableList()
+                .also { it.removeIf(String::isNullOrBlank) }
 
         wrapperExtension.targets.forEach { targetOptions ->
             if (installed.contains(targetOptions.target)) {
